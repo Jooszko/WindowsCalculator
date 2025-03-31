@@ -12,21 +12,18 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Kalkulator
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        bool pierwsze = true;
+        Char dzialanie = 'x';
+        String pierwszaLiczba = "";
+        String drugaLiczba = "";
+        Char poprzednieDzialanie = 'x';
+        bool ciagleRowna = false;
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        bool pierwsze = true;
-        Char dzialanie = 'x';
-        String pierwszaLiczba = "";
-        bool czyDalszeDzialanie = false;
-        String drugaLiczba = "";
 
         private void operation(object sender, RoutedEventArgs e)
         {
@@ -50,6 +47,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "1";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
 
                         case "p2":
@@ -64,6 +62,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "2";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p3":
                             if (pierwsze)
@@ -77,6 +76,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "3";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p4":
                             if (pierwsze)
@@ -90,6 +90,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "4";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p5":
                             if (pierwsze)
@@ -103,6 +104,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "5";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p6":
                             if (pierwsze)
@@ -116,6 +118,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "6";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p7":
                             if (pierwsze)
@@ -129,6 +132,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "7";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p8":
                             if (pierwsze)
@@ -142,6 +146,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "8";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p9":
                             if (pierwsze)
@@ -155,6 +160,7 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "9";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "p0":
                             if (wyswietlacz.Text.Equals("0"))
@@ -172,15 +178,15 @@ namespace Kalkulator
                                 zawartoscWyswietlacza = zawartoscWyswietlacza + "0";
                                 wyswietlacz.Text = zawartoscWyswietlacza.ToString();
                             }
+                            ciagleRowna = false;
                             break;
                         case "pC":
                             pierwsze = true;
                             wyswietlacz.Text = "0";
-                            czyDalszeDzialanie = false;
                             dzialanie = 'x';
                             pierwszaLiczba = "";
                             drugaLiczba = "";
-
+                            ciagleRowna = false;
                             break;
                         case "pCe":
                             if (wyswietlacz.Text.ToString().Length == 2)
@@ -278,9 +284,19 @@ namespace Kalkulator
                             pierwsze = true;
                             break;
                         case "pProcent":
-                            dzialanie = '%';
-                            pierwszaLiczba = wyswietlacz.Text.ToString();
-                            pierwsze = true;
+                            if (dzialanie.Equals('x'))
+                            {
+                                pierwsze = true;
+                                wyswietlacz.Text = "0";
+                                dzialanie = 'x';
+                                pierwszaLiczba = "";
+                                drugaLiczba = "";
+                                ciagleRowna = false;
+                            }
+                            else
+                            {
+                                wyswietlacz.Text= Convert.ToString(Convert.ToDouble(wyswietlacz.Text.ToString()) *0.01);
+                            }
                             break;
 
                         case "pPierwiastek":
@@ -314,7 +330,6 @@ namespace Kalkulator
                     pierwsze = true;
                     dzialanie = 'x';
                     pierwszaLiczba = "";
-                    czyDalszeDzialanie = false;
                     drugaLiczba = "";
                 }
 
@@ -338,21 +353,18 @@ namespace Kalkulator
             {
                 return;
             }
-            if (dzialanie.Equals('x'))
-            {
-                return;
-            }
 
             double liczbaEkranowa = Convert.ToDouble(wyswietlacz.Text);
 
-            if (!czyDalszeDzialanie)
+            if (!ciagleRowna)
             {
                 drugaLiczba = liczbaEkranowa.ToString();
             }
+            
 
             double wynik = 0;
 
-            switch (dzialanie)
+            switch (ciagleRowna ? poprzednieDzialanie : dzialanie)
             {
                 case '+':
                     wynik = Convert.ToDouble(pierwszaLiczba) + Convert.ToDouble(drugaLiczba);
@@ -376,12 +388,14 @@ namespace Kalkulator
                     wynik = Convert.ToDouble(pierwszaLiczba) * Convert.ToDouble(drugaLiczba) * 0.01;
                     break;
             }
-
-
-
+            if (!ciagleRowna)
+            {
+                poprzednieDzialanie = dzialanie;
+            }
+            ciagleRowna = true;
+            dzialanie = 'x';
             wyswietlacz.Text = wynik.ToString();
             pierwszaLiczba = wynik.ToString();
-            czyDalszeDzialanie = true;
         }
     }
 }
